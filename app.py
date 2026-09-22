@@ -39,6 +39,7 @@ def process_uploaded_files(
             status_col=12,
             maybe_names_col=13,
             review_col=14,
+            submission_count_col=15,
         )
 
         output_bytes = output_path.read_bytes()

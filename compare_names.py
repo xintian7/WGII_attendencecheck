@@ -230,6 +230,7 @@ def mark_matches(
     status_col: int = 12,
     maybe_names_col: int = 13,
     review_col: int = 14,
+    submission_count_col: int = 15,
 ) -> Tuple[int, int, int, int, int, int]:
     shutil.copy2(source_path, output_path)
 
@@ -254,6 +255,7 @@ def mark_matches(
     ws.cell(row=header_row, column=status_col).value = "Matched in RSVP"
     ws.cell(row=header_row, column=maybe_names_col).value = "Similar RSVP full names"
     ws.cell(row=header_row, column=review_col).value = "Unmatched RSVP names"
+    ws.cell(row=header_row, column=submission_count_col).value = "Submission count"
 
     rsvp_first_names, rsvp_last_names = build_exact_name_sets(rsvp_people)
 
@@ -281,9 +283,11 @@ def mark_matches(
             last_hits += 1
 
         ws.cell(row=row, column=maybe_names_col).value = ""
+        ws.cell(row=row, column=submission_count_col).value = ""
         exact_full_indices = find_exact_full_match_indices(first_name, last_name, rsvp_people)
         if exact_full_indices:
             ws.cell(row=row, column=status_col).value = "yes"
+            ws.cell(row=row, column=submission_count_col).value = len(exact_full_indices)
             matched_rsvp_indices.update(exact_full_indices)
             matched_rows += 1
         else:
@@ -292,6 +296,7 @@ def mark_matches(
                 maybe_candidates = [rsvp_people[i]["full_display"] for i in maybe_indices]
                 ws.cell(row=row, column=status_col).value = "maybe"
                 ws.cell(row=row, column=maybe_names_col).value = "; ".join(maybe_candidates)
+                ws.cell(row=row, column=submission_count_col).value = len(maybe_indices)
                 matched_rsvp_indices.update(maybe_indices)
                 maybe_rows += 1
             else:
@@ -370,6 +375,7 @@ def main() -> None:
         status_col=12,
         maybe_names_col=13,
         review_col=14,
+        submission_count_col=15,
     )
 
     print(f"Source: {source_path}")
